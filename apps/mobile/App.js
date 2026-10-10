@@ -1,35 +1,38 @@
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StudioScreen } from './src/screens/StudioScreen';
+import { useTheme } from './src/theme/useTheme';
 
-export default function App() {
-  const isDark = useColorScheme() === 'dark';
+function AppNavigation() {
+  const { colors, isDark } = useTheme();
+  const scheme = useColorScheme();
+
+  const navTheme = {
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+      background: colors.background,
+      card: colors.background,
+      text: colors.text,
+      border: colors.border,
+      primary: colors.tint,
+    },
+  };
 
   return (
-    <View style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
-      <Text style={isDark ? styles.textDark : styles.textLight}>
-        Open up App.js to start working on your app!
-      </Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer theme={navTheme}>
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <StudioScreen />
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  containerLight: {
-    backgroundColor: '#ffffff',
-  },
-  containerDark: {
-    backgroundColor: '#000000',
-  },
-  textLight: {
-    color: '#000000',
-  },
-  textDark: {
-    color: '#ffffff',
-  },
-});
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <AppNavigation />
+    </SafeAreaProvider>
+  );
+}
